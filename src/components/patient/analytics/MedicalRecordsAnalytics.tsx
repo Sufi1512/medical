@@ -1,4 +1,5 @@
 // components/patient/analytics/MedicalRecordsAnalytics.tsx
+// components/patient/analytics/MedicalRecordsAnalytics.tsx
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, Activity, Filter, X } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -27,6 +28,11 @@ interface UserInfo {
   gender: string;
 }
 
+// Add the searchQuery prop to the component interface
+interface MedicalRecordsAnalyticsProps {
+  searchQuery: string;
+}
+
 const mockUserInfo: UserInfo = {
   name: 'John Doe',
   age: 34,
@@ -52,13 +58,34 @@ const chartData = [
   { month: 'Mar', consultations: 1, tests: 1, prescriptions: 1 },
 ];
 
-export const MedicalRecordsAnalytics: React.FC = () => {
+export const MedicalRecordsAnalytics: React.FC<MedicalRecordsAnalyticsProps> = ({ searchQuery }) => {
   const [userRecords, setUserRecords] = useState<UserRecord[]>(mockUserRecords);
   const [diagnosticRecords, setDiagnosticRecords] = useState<DiagnosticRecord[]>(mockDiagnosticRecords);
   const [activeTab, setActiveTab] = useState<'user' | 'diagnostic'>('user');
   const [filterType, setFilterType] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date-asc' | 'date-desc' | 'doctor'>('date-desc');
   const [selectedDiagnostic, setSelectedDiagnostic] = useState<DiagnosticRecord | null>(null);
+
+  // Add filtering by search query
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = mockUserRecords.filter(record => 
+        record.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.doctor.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setUserRecords(filtered);
+      
+      const filteredDiagnostic = mockDiagnosticRecords.filter(record => 
+        record.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.doctor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (record.notes && record.notes.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+      setDiagnosticRecords(filteredDiagnostic);
+    } else {
+      setUserRecords(mockUserRecords);
+      setDiagnosticRecords(mockDiagnosticRecords);
+    }
+  }, [searchQuery]);
 
   const filteredUserRecords = userRecords
     .filter(record => filterType === 'all' || record.type === filterType)

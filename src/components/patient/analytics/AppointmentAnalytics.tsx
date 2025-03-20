@@ -14,13 +14,18 @@ interface Appointment {
   notes?: string;
 }
 
+// Add the searchQuery prop interface
+interface AppointmentAnalyticsProps {
+  searchQuery: string;
+}
+
 const initialAppointments: Appointment[] = [
   { id: '1', date: '2025-03-21', time: '10:00', doctor: 'Dr. Smith', status: 'scheduled', purpose: 'Follow-up on knee abrasion', location: 'https://meet.example.com/abc123', notes: 'Bring recent photos' },
   { id: '2', date: '2025-03-15', time: '14:00', doctor: 'Dr. Johnson', status: 'completed', purpose: 'Annual check-up', location: 'Clinic A', notes: 'Blood test results reviewed' },
   { id: '3', date: '2025-03-18', time: '09:30', doctor: 'Dr. Smith', status: 'completed', purpose: 'Skin rash consultation', location: 'Clinic B', notes: '' },
 ];
 
-export const AppointmentAnalytics: React.FC = () => {
+export const AppointmentAnalytics: React.FC<AppointmentAnalyticsProps> = ({ searchQuery }) => {
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [filter, setFilter] = useState<'all' | 'scheduled' | 'completed' | 'cancelled'>('scheduled');
@@ -28,6 +33,7 @@ export const AppointmentAnalytics: React.FC = () => {
   const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(null);
   const [showReschedule, setShowReschedule] = useState<string | null>(null);
   const [newNotes, setNewNotes] = useState<string>('');
+  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
     const savedAppointments = localStorage.getItem('appointments');
@@ -46,6 +52,28 @@ export const AppointmentAnalytics: React.FC = () => {
       localStorage.setItem('appointments', JSON.stringify(initialAppointments));
     }
   }, []);
+
+  // Apply search query filter
+  useEffect(() => {
+    let filtered = appointments;
+    
+    // First filter by status if not "all"
+    if (filter !== 'all') {
+      filtered = filtered.filter(a => a.status === filter);
+    }
+    
+    // Then apply search query if it exists
+    if (searchQuery) {
+      filtered = filtered.filter(appointment => 
+        appointment.doctor.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (appointment.purpose && appointment.purpose.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (appointment.notes && appointment.notes.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    
+    setFilteredAppointments(filtered);
+  }, [appointments, filter, searchQuery]);
+
 
   const chartData = [
     { name: 'Scheduled', value: appointments.filter(a => a.status === 'scheduled').length },
@@ -103,7 +131,7 @@ export const AppointmentAnalytics: React.FC = () => {
     setNewNotes('');
   };
 
-  const filteredAppointments = filter === 'all' ? appointments : appointments.filter(a => a.status === filter);
+  // const filteredAppointments = filter === 'all' ? appointments : appointments.filter(a => a.status === filter);
 
   return (
     <div className="space-y-8 p-4 md:p-6 bg-gray-100 min-h-screen">
