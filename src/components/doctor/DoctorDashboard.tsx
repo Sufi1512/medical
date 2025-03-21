@@ -70,7 +70,7 @@ export const DoctorDashboard: React.FC = () => {
             { icon: Calendar, label: 'Consultations', value: 'consultations' as TabType },
             { icon: Brain, label: 'AI Assistant', value: 'ai-assistant' as TabType },
             { icon: DollarSign, label: 'Fee Management', value: 'fees' as TabType },
-            { icon: Bot, label: 'Chatbot Setup', value: 'chatbot' as TabType },
+            { icon: Bot, label: 'AI Agent Setup', value: 'chatbot' as TabType },
             { icon: Settings, label: 'Settings', value: 'settings' as TabType },
           ].map((item) => (
             <button

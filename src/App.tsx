@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthForm } from './components/auth/AuthForm';
 import { DoctorDashboard } from './components/doctor/DoctorDashboard';
 import { PatientDashboard } from './components/patient/PatientDashboard';
+import { LandingPage } from './components/landing/LandingPage';
 import { useAuthStore } from './store/authStore';
 
 function App() {
@@ -30,11 +31,11 @@ function App() {
         />
         <Route 
           path="/" 
-          element={<Navigate to={user ? "/dashboard" : "/login"} />} 
+          element={user ? <Navigate to="/dashboard" /> : <LandingPage />} 
         />
       </Routes>
     </Router>
   );
 }
 
-export default App
+export default App;

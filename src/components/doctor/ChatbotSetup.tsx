@@ -1,4 +1,4 @@
-// components/doctor/ChatbotSetup.tsx
+// components/doctor/AI AgentSetup.tsx
 import React, { useState } from 'react';
 import { Bot, Copy, Zap, Settings, HelpCircle } from 'lucide-react';
 
@@ -43,7 +43,7 @@ export const ChatbotSetup: React.FC = () => {
       <div className="bg-white rounded-2xl shadow-sm p-6">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold flex items-center">
-            <Bot className="mr-2 text-blue-600" /> Chatbot Configuration
+            <Bot className="mr-2 text-blue-600" /> AI Agent Configuration
           </h3>
           <button
             onClick={toggleBotStatus}
